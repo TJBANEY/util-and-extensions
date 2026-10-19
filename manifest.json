@@ -1,0 +1,72 @@
+{
+  "manifest_version": 3,
+  "name": "Card Deal Scout",
+  "short_name": "DealScout",
+  "version": "0.1.0",
+  "description": "Overlays LP–NM raw market prices and deal badges on Pokémon card listings (Mercari, eBay, and any site you enable it on).",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Card Deal Scout — Deal Digest",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options/options.html",
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications",
+    "tabs",
+    "scripting",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://api.justtcg.com/*",
+    "https://www.pricecharting.com/*"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.mercari.com/*",
+        "*://*.ebay.com/*"
+      ],
+      "js": [
+        "lib/storage.js",
+        "lib/card-parser.js",
+        "lib/condition-sniffer.js",
+        "lib/deal-scorer.js",
+        "content/adapters/mercari.js",
+        "content/adapters/ebay.js",
+        "content/adapters/generic.js",
+        "content/adapters/index.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/overlay.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png"],
+      "matches": ["*://*/*"]
+    }
+  ]
+}

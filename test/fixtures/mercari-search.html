@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Shop Pokemon Japanese TCG VS on Mercari (fixture)</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#fff;color:#333}
+header{padding:14px 24px;border-bottom:1px solid #eee;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:24px;max-width:1100px}
+a[data-testid=ProductThumbWrapper]{text-decoration:none;color:inherit;display:block}
+[data-testid=ItemContainer]{position:relative}
+.thumb{aspect-ratio:1/1;background:linear-gradient(135deg,#dbeafe,#e0e7ff);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:12px}
+[data-testid=ItemName]{margin:8px 0 4px;font-size:13px;line-height:1.3;height:34px;overflow:hidden}
+[data-testid=ProductThumbItemPrice]{font-weight:700;font-size:15px}
+[data-testid=ProductThumbItemDiscountedPrice]{color:#999;text-decoration:line-through;font-weight:400;font-size:12px;margin-left:6px}
+[data-testid=ItemLike]{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+</style></head>
+<body>
+<header>Mercari — "pokemon japanese vs" (fixture)</header>
+<div class="grid" id="grid"></div>
+<script>
+const items = [
+  ["Pokemon TCG Japanese Mega Floette ex SAR 115/083 Ninja Spinner", 13.50, null, "m1001"],
+  ["ARS 4 2001 Pokemon TCG Rocket's Suicune Pokemon VS #096/141 Holo Japanese 1st", 250.00, null, "m1002"],
+  ["VS Bruno’s Steelix 084/141 HP 80 Japanese Pokémon TCG 1st Ed Holo", 450.00, null, "m1003"],
+  ["Japanese Vs set Blaine's Typhlosion 1st edition condition shown", 91.21, 112.00, "m1004"],
+  ["Rocket's Raikou 094/141 Pokemon vs Holo (Japanese)", 133.00, 180.00, "m1005"],
+  ["Charizard ex 199/165 Pokemon 151 SV2a Japanese Near Mint", 95.00, null, "m1006"],
+  ["Umbreon VMAX Alt Art 215/203 Evolving Skies LP", 1100.00, null, "m1007"],
+  ["Pokemon Japanese Lot of 50 cards holo bundle", 40.00, null, "m1008"],
+  ["Iono SAR 350/190 s12a VSTAR Universe Japanese", 180.00, null, "m1009"],
+  ["Rocket's Entei 093/141 VS Japanese 1st edition PSA 9", 420.00, null, "m1010"],
+  ["Mystery card from my childhood", 12.00, null, "m1011"],
+  ["Pikachu ex 238/191 Surging Sparks SIR crease on corner", 60.00, null, "m1012"],
+];
+const g = document.getElementById('grid');
+for (const [title, price, orig, id] of items) {
+  const a = document.createElement('a'); a.setAttribute('data-testid','ProductThumbWrapper'); a.href = '/us/item/' + id + '/';
+  a.innerHTML = `<div data-testid="ItemContainer"><div><div data-testid="ItemLike"></div><div data-testid="StyledProductThumb"><div class="thumb">photo</div></div></div>
+  <div><div><p data-testid="ItemName">${title}</p></div><div><p data-testid="ProductThumbItemPrice">$${price.toFixed(2)}${orig ? `<span data-testid="ProductThumbItemDiscountedPrice">$${orig.toFixed(2)}</span>` : ''}</p></div></div></div>`;
+  g.append(a);
+}
+</script>
+</body></html>

@@ -1,0 +1,128 @@
+/* Card Deal Scout — overlay styles (prefixed .cds- to avoid collisions) */
+.cds-host-rel { position: relative !important; }
+
+.cds-badge {
+  position: absolute; top: 6px; left: 6px; z-index: 40;
+  display: inline-block; box-sizing: border-box; max-width: calc(100% - 12px);
+  font: 700 11px/1.15 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: .02em; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.25);
+  border-radius: 8px; padding: 4px 7px 4px 7px; border: 2px solid transparent;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35); cursor: pointer; pointer-events: auto; user-select: none;
+  transition: transform .12s ease;
+}
+.cds-badge:hover { transform: translateY(-1px) scale(1.03); z-index: 41; }
+.cds-badge .cds-l1 { display: flex; gap: 6px; align-items: baseline; white-space: nowrap; }
+.cds-badge .cds-lab { font-weight: 800; }
+.cds-badge .cds-pct { font-weight: 600; opacity: .95; }
+.cds-badge .cds-l2 { margin-top: 2px; font-size: 10.5px; font-weight: 600; opacity: .95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cds-badge .cds-trend { margin-left: 4px; font-weight: 700; }
+.cds-badge .cds-trend.cds-up { color: #bbf7d0; }
+.cds-badge .cds-trend.cds-down { color: #fecaca; }
+.cds-tier-fair .cds-trend.cds-up { color: #166534; }
+.cds-tier-fair .cds-trend.cds-down { color: #991b1b; }
+
+/* ---- the four tiers Tim asked for ---------------------------------------- */
+.cds-tier-steal { background: #16a34a; border-color: #bbf7d0; animation: cds-pulse-green 1.6s ease-out infinite; }
+.cds-tier-offer { background: linear-gradient(135deg, #0d9488 0%, #0f766e 55%, #ca8a04 100%); border-color: #fde68a; }
+.cds-tier-fair  { background: #e5e7eb; color: #111827; border-color: #1f2937; text-shadow: none; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.cds-tier-over  { background: #dc2626; border-color: #fecaca; }
+/* ---- special states ------------------------------------------------------- */
+.cds-tier-slab  { background: #6d28d9; border-color: #ddd6fe; }
+.cds-tier-lot   { background: #475569; border-color: #cbd5e1; }
+.cds-tier-unknown { background: rgba(255,255,255,.94); color: #4b5563; border: 2px dashed #9ca3af; text-shadow: none; box-shadow: none; padding: 3px 6px; }
+.cds-tier-nosource { background: #fff7ed; color: #9a3412; border-color: #fb923c; text-shadow: none; }
+.cds-tier-error { background: #fff1f2; color: #9f1239; border-color: #fda4af; text-shadow: none; }
+.cds-tier-loading { background: rgba(17,24,39,.78); border-color: rgba(255,255,255,.45); }
+.cds-tier-loading .cds-lab::after { content: ""; display: inline-block; width: 9px; height: 9px; margin-left: 6px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; vertical-align: -1px; animation: cds-spin .8s linear infinite; }
+
+@keyframes cds-pulse-green {
+  0%   { box-shadow: 0 2px 6px rgba(0,0,0,.35), 0 0 0 0 rgba(22,163,74,.75); }
+  70%  { box-shadow: 0 2px 6px rgba(0,0,0,.35), 0 0 0 10px rgba(22,163,74,0); }
+  100% { box-shadow: 0 2px 6px rgba(0,0,0,.35), 0 0 0 0 rgba(22,163,74,0); }
+}
+@keyframes cds-spin { to { transform: rotate(360deg); } }
+@keyframes cds-pulse-amber {
+  0%   { box-shadow: inset 0 0 0 3px #f59e0b, 0 0 0 0 rgba(245,158,11,.7); }
+  70%  { box-shadow: inset 0 0 0 3px #f59e0b, 0 0 0 12px rgba(245,158,11,0); }
+  100% { box-shadow: inset 0 0 0 3px #f59e0b, 0 0 0 0 rgba(245,158,11,0); }
+}
+
+/* watchlist hit */
+.cds-watch-cell { animation: cds-pulse-amber 1.8s ease-out infinite; border-radius: 8px; }
+.cds-badge.cds-watch { outline: 3px solid #f59e0b; outline-offset: 2px; }
+.cds-badge.cds-watch .cds-l1::before { content: "★ "; color: #fde68a; }
+
+/* already-seen listings */
+.cds-badge.cds-seen { opacity: .6; filter: saturate(.45); animation: none; }
+.cds-badge.cds-seen .cds-l1::after { content: " 👁"; font-size: 10px; }
+
+/* "sold" cells: dim */
+.cds-badge.cds-sold { opacity: .45; filter: grayscale(1); animation: none; }
+
+/* ---- hover / pinned popover (single shared element on <body>) -------------- */
+#cds-pop {
+  position: fixed; z-index: 2147483000; width: 300px; max-width: calc(100vw - 16px); box-sizing: border-box;
+  background: #ffffff; color: #111827; border-radius: 12px; border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 34px rgba(0,0,0,.28); padding: 10px 12px 10px;
+  font: 400 12px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  text-align: left; display: none; cursor: default; pointer-events: auto;
+}
+#cds-pop.cds-open { display: block; }
+#cds-pop a { color: #1d4ed8; text-decoration: none; }
+#cds-pop a:hover { text-decoration: underline; }
+#cds-pop .cds-pop-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+#cds-pop .cds-pill { display: inline-block; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 999px; color: #fff; letter-spacing: .03em; }
+#cds-pop .cds-pill.steal { background: #16a34a; } #cds-pop .cds-pill.offer { background: linear-gradient(135deg,#0f766e,#ca8a04); }
+#cds-pop .cds-pill.fair { background: #e5e7eb; color: #111827; border: 1px solid #1f2937; } #cds-pop .cds-pill.over { background: #dc2626; }
+#cds-pop .cds-pill.slab { background: #6d28d9; } #cds-pop .cds-pill.lot { background: #475569; } #cds-pop .cds-pill.unknown, #cds-pop .cds-pill.nosource, #cds-pop .cds-pill.error { background: #9ca3af; }
+#cds-pop .cds-pop-title { font-weight: 700; font-size: 12.5px; line-height: 1.25; }
+#cds-pop .cds-pop-sub { color: #6b7280; font-size: 11px; }
+#cds-pop .cds-blurb { font-style: italic; color: #374151; margin: 2px 0 8px; }
+#cds-pop .cds-grid { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin-bottom: 8px; }
+#cds-pop .cds-grid b { font-weight: 700; }
+#cds-pop .cds-k { color: #6b7280; }
+#cds-pop .cds-good { color: #15803d; font-weight: 700; } #cds-pop .cds-bad { color: #b91c1c; font-weight: 700; } #cds-pop .cds-warn { color: #b45309; font-weight: 700; }
+#cds-pop .cds-flags { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 4px 8px; margin-bottom: 8px; font-size: 11px; }
+#cds-pop .cds-links { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 6px 0 8px; font-size: 11px; }
+#cds-pop .cds-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+#cds-pop button.cds-btn { font: 600 11px/1 inherit; padding: 6px 9px; border-radius: 7px; border: 1px solid #d1d5db; background: #f9fafb; color: #111827; cursor: pointer; }
+#cds-pop button.cds-btn:hover { background: #f3f4f6; }
+#cds-pop button.cds-btn.cds-primary { background: #111827; color: #fff; border-color: #111827; }
+#cds-pop .cds-foot { margin-top: 8px; color: #9ca3af; font-size: 10.5px; display: flex; justify-content: space-between; gap: 8px; }
+#cds-pop details summary { cursor: pointer; color: #6b7280; font-size: 11px; }
+#cds-pop details ul { margin: 4px 0 0; padding-left: 16px; color: #4b5563; font-size: 11px; }
+
+/* ---- detail-page panel ------------------------------------------------------ */
+.cds-panel {
+  box-sizing: border-box; margin: 12px 0; padding: 12px 14px; border-radius: 12px; background: #fff; color: #111827;
+  border: 1px solid #e5e7eb; border-left: 6px solid #9ca3af; box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  font: 400 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.cds-panel.steal { border-left-color: #16a34a; } .cds-panel.offer { border-left-color: #0f766e; } .cds-panel.fair { border-left-color: #374151; } .cds-panel.over { border-left-color: #dc2626; } .cds-panel.slab { border-left-color: #6d28d9; } .cds-panel.lot { border-left-color: #475569; }
+.cds-panel a { color: #1d4ed8; text-decoration: none; } .cds-panel a:hover { text-decoration: underline; }
+.cds-panel .cds-ph { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.cds-panel .cds-pill { display: inline-block; font-weight: 800; font-size: 12px; padding: 3px 10px; border-radius: 999px; color: #fff; letter-spacing: .03em; }
+.cds-panel .cds-pill.steal { background: #16a34a; animation: cds-pulse-green 1.6s ease-out infinite; } .cds-panel .cds-pill.offer { background: linear-gradient(135deg,#0f766e,#ca8a04); }
+.cds-panel .cds-pill.fair { background: #e5e7eb; color: #111827; border: 1px solid #1f2937; } .cds-panel .cds-pill.over { background: #dc2626; }
+.cds-panel .cds-pill.slab { background: #6d28d9; } .cds-panel .cds-pill.lot { background: #475569; } .cds-panel .cds-pill.unknown, .cds-panel .cds-pill.nosource, .cds-panel .cds-pill.error, .cds-panel .cds-pill.loading { background: #9ca3af; }
+.cds-panel .cds-pill.watch { background: #f59e0b; color: #111827; }
+.cds-panel .cds-brand { margin-left: auto; color: #9ca3af; font-size: 11px; font-weight: 600; }
+.cds-panel .cds-blurb { font-style: italic; color: #374151; margin-bottom: 10px; }
+.cds-panel .cds-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 18px; }
+.cds-panel .cds-sec h4 { margin: 0 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; }
+.cds-panel .cds-sec .cds-row { display: flex; justify-content: space-between; gap: 8px; padding: 1px 0; }
+.cds-panel .cds-big { font-size: 20px; font-weight: 800; line-height: 1.1; }
+.cds-panel .cds-good { color: #15803d; font-weight: 700; } .cds-panel .cds-bad { color: #b91c1c; font-weight: 700; } .cds-panel .cds-warn { color: #b45309; font-weight: 700; } .cds-panel .cds-muted { color: #6b7280; }
+.cds-panel .cds-flags { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 4px 8px; margin-top: 6px; font-size: 12px; }
+.cds-panel .cds-links { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; font-size: 12px; }
+.cds-panel .cds-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.cds-panel button.cds-btn { font: 600 12px/1 inherit; padding: 7px 11px; border-radius: 8px; border: 1px solid #d1d5db; background: #f9fafb; color: #111827; cursor: pointer; }
+.cds-panel button.cds-btn:hover { background: #f3f4f6; } .cds-panel button.cds-btn.cds-primary { background: #111827; color: #fff; border-color: #111827; }
+.cds-panel select.cds-sel { font: inherit; font-size: 12px; padding: 2px 4px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; }
+.cds-panel .cds-spark { display: block; width: 100%; height: 34px; margin-top: 4px; }
+.cds-panel details summary { cursor: pointer; color: #6b7280; font-size: 12px; margin-top: 8px; }
+.cds-panel details ul { margin: 4px 0 0; padding-left: 18px; color: #4b5563; font-size: 12px; }
+.cds-panel .cds-foot { margin-top: 10px; color: #9ca3af; font-size: 11px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.cds-toast { position: fixed; bottom: 18px; right: 18px; z-index: 2147483001; background: #111827; color: #fff; padding: 10px 14px; border-radius: 10px; font: 600 12px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; box-shadow: 0 6px 24px rgba(0,0,0,.3); }
+.cds-flash { animation: cds-flash 1.2s ease-out 2; }
+@keyframes cds-flash { 0%, 100% { box-shadow: 0 0 0 0 rgba(29,78,216,0); } 40% { box-shadow: 0 0 0 6px rgba(29,78,216,.55); } }

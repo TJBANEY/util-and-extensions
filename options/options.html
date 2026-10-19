@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Card Deal Scout — Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header>
+    <img src="../icons/icon48.png" alt="" width="36" height="36">
+    <div><h1>Card Deal Scout</h1><div class="muted">Settings · <span id="ver"></span></div></div>
+    <div class="spacer"></div>
+    <span id="saved" class="saved">Saved ✓</span>
+  </header>
+
+  <nav>
+    <a href="#sources">Pricing sources</a><a href="#compare">Comparison &amp; badges</a><a href="#offer">Offer &amp; flip</a><a href="#watch">Watchlist</a><a href="#patrol">Saved-search patrol</a><a href="#sheet">Manual price sheet</a><a href="#sites">Sites &amp; display</a><a href="#misc">Backup &amp; debug</a>
+  </nav>
+
+  <main>
+    <section id="sources">
+      <h2>Pricing sources</h2>
+      <p class="muted">Providers are tried in order; the first hit wins unless you choose "blend all". Keys are stored in Chrome sync storage and only sent to that provider's API.</p>
+      <div class="card">
+        <div class="row"><label>JustTCG API key <a href="https://justtcg.com/dashboard" target="_blank" rel="noopener">get a free key ↗</a></label>
+          <div class="inline"><input type="password" id="justtcgApiKey" placeholder="jtcg_…" autocomplete="off"><button data-test="justtcg">Test</button></div>
+          <div class="hint" id="justtcgStatus"></div></div>
+        <div class="row two">
+          <div><label>English game id</label><input id="justtcgGameEn" placeholder="pokemon"></div>
+          <div><label>Japanese game id <span class="muted">(auto-detected when you test)</span></label><input id="justtcgGameJa" placeholder="auto"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><label>PriceCharting API token <span class="muted">(paid subscription)</span> <a href="https://www.pricecharting.com/api-documentation" target="_blank" rel="noopener">docs ↗</a></label>
+          <div class="inline"><input type="password" id="pricechartingToken" placeholder="40-character token" autocomplete="off"><button data-test="pricecharting">Test</button></div>
+          <div class="hint" id="pricechartingStatus"></div></div>
+        <div class="row two">
+          <div><label>LP as % of PriceCharting "Ungraded"</label><input type="number" id="pricechartingLpFactor" min="0.3" max="1" step="0.01"></div>
+          <div><label>Cache prices for (hours)</label><input type="number" id="cacheTtlHours" min="1" max="168" step="1"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row two">
+          <div><label>Provider order</label><select id="providerOrder">
+            <option value="justtcg,pricecharting,manual">JustTCG → PriceCharting → Manual sheet</option>
+            <option value="pricecharting,justtcg,manual">PriceCharting → JustTCG → Manual sheet</option>
+            <option value="manual,justtcg,pricecharting">Manual sheet → JustTCG → PriceCharting</option>
+            <option value="manual,pricecharting,justtcg">Manual sheet → PriceCharting → JustTCG</option>
+          </select></div>
+          <div><label>Blend mode</label><select id="blendMode"><option value="first">First provider that matches (saves quota)</option><option value="all">Query all, average the tiers</option></select></div>
+        </div>
+        <div class="row"><label class="chk"><input type="checkbox" id="manualEnabled"> Use my manual price sheet as a provider</label></div>
+        <div class="row inline"><button id="btnClearCache">Clear price cache</button><span class="hint">Do this after adding or changing a key so "no match" results are retried.</span></div>
+      </div>
+    </section>
+
+    <section id="compare">
+      <h2>Comparison &amp; badges</h2>
+      <div class="card">
+        <div class="row two">
+          <div><label>When the listing's condition is unknown, compare against</label><select id="comparisonBasis"><option value="mid">Midpoint of LP and NM</option><option value="nm">NM price</option><option value="lp">LP price</option></select></div>
+          <div><label>Minimum listing price to badge ($)</label><input type="number" id="minPriceForBadge" min="0" step="0.5"></div>
+        </div>
+        <div class="row"><label class="chk"><input type="checkbox" id="useSniffedCondition"> Use the sniffed condition (NM/LP/MP…) from title, description and the site's condition field</label></div>
+        <h3>Tier thresholds (asking ÷ market)</h3>
+        <div class="tiers">
+          <div class="tier steal"><b>STEAL</b><span>ratio ≤</span><input type="number" id="th_steal" min="0.1" max="1" step="0.01"></div>
+          <div class="tier offer"><b>OFFER IT</b><span>ratio ≤</span><input type="number" id="th_offer" min="0.1" max="1.5" step="0.01"></div>
+          <div class="tier fair"><b>AT MARKET</b><span>ratio ≤</span><input type="number" id="th_fair" min="0.5" max="3" step="0.01"></div>
+          <div class="tier over"><b>WAY OVER</b><span>anything above</span></div>
+        </div>
+        <p class="hint">Defaults: steal ≤ 0.72 (28%+ under market), offer ≤ 0.92, at-market ≤ 1.15, otherwise way over.</p>
+      </div>
+    </section>
+
+    <section id="offer">
+      <h2>Offer &amp; flip calculator</h2>
+      <div class="card">
+        <div class="row two">
+          <div><label>Offer target (% of market)</label><input type="number" id="offerTargetRatio" min="0.3" max="1" step="0.01"></div>
+          <div><label>Max discount below asking the site allows</label><input type="number" id="offerMaxDiscount" min="0" max="0.9" step="0.01"></div>
+        </div>
+        <div class="row two">
+          <div><label>Default resale platform</label><select id="resalePlatform"><option value="ebay">eBay</option><option value="mercari">Mercari</option></select></div>
+          <div><label>Shipping cost per card ($)</label><input type="number" id="shippingCost" min="0" step="0.05"></div>
+        </div>
+        <div class="row two">
+          <div><label>Supplies per card ($)</label><input type="number" id="suppliesCost" min="0" step="0.05"></div>
+          <div></div>
+        </div>
+        <h3>Fee schedules</h3>
+        <div class="row three">
+          <div><label>eBay final value %</label><input type="number" id="fee_ebay_pct" min="0" max="1" step="0.0001"></div>
+          <div><label>eBay per-order fixed ($)</label><input type="number" id="fee_ebay_fixed" min="0" step="0.01"></div>
+          <div></div>
+        </div>
+        <div class="row three">
+          <div><label>Mercari selling %</label><input type="number" id="fee_mercari_pct" min="0" max="1" step="0.0001"></div>
+          <div><label>Mercari processing %</label><input type="number" id="fee_mercari_ppct" min="0" max="1" step="0.0001"></div>
+          <div><label>Mercari processing fixed ($)</label><input type="number" id="fee_mercari_fixed" min="0" step="0.01"></div>
+        </div>
+        <p class="hint">Fee schedules change — defaults are eBay 13.25% + $0.30 and Mercari 10% + 2.9% + $0.50. Edit to match your account.</p>
+      </div>
+    </section>
+
+    <section id="watch">
+      <h2>Watchlist &amp; alerts</h2>
+      <div class="card">
+        <div class="row"><label class="chk"><input type="checkbox" id="notifyOnWatchHit"> Chrome notification when a watchlist card shows up under your max price</label></div>
+        <div class="row"><label class="chk"><input type="checkbox" id="notifyOnSteal"> Also notify for any STEAL found during saved-search patrol</label></div>
+        <h3>Cards you're hunting</h3>
+        <div class="row watch-add">
+          <input id="w_name" placeholder="Card name (e.g. Umbreon VMAX)">
+          <input id="w_number" placeholder="# (215)" size="6">
+          <input id="w_set" placeholder="set code (s12a)" size="8">
+          <select id="w_lang"><option value="any">any lang</option><option value="en">EN</option><option value="ja">JP</option></select>
+          <input id="w_max" type="number" placeholder="max $" step="1">
+          <button id="btnAddWatch" class="primary">Add</button>
+        </div>
+        <table id="watchTable"><thead><tr><th>Card</th><th>#</th><th>Set</th><th>Lang</th><th>Max $</th><th>Note</th><th></th></tr></thead><tbody></tbody></table>
+        <p class="hint">Tip: on any listing, hover a badge and hit <b>☆ Watch this card</b> — it pre-fills the max price at your "offer" threshold.</p>
+      </div>
+    </section>
+
+    <section id="patrol">
+      <h2>Saved-search patrol</h2>
+      <div class="card">
+        <p class="muted">Re-opens your saved search URLs in background tabs on a schedule, scans them, closes them, and notifies you about watchlist hits (and steals, if enabled above). Only runs while Chrome is open.</p>
+        <div class="row two">
+          <div><label class="chk"><input type="checkbox" id="patrolEnabled"> Enable patrol</label></div>
+          <div><label>Every (minutes, min 10)</label><input type="number" id="patrolIntervalMin" min="10" step="5"></div>
+        </div>
+        <div class="row inline"><input id="s_label" placeholder="Label (e.g. JP VS series)"><input id="s_url" placeholder="https://www.mercari.com/search/?keyword=…" style="flex:2"><button id="btnAddSearch" class="primary">Add</button><button id="btnPatrolNow">Run now</button></div>
+        <table id="searchTable"><thead><tr><th>Label</th><th>URL</th><th>On</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+    <section id="sheet">
+      <h2>Manual price sheet</h2>
+      <div class="card">
+        <p class="muted">Paste CSV with a header row. Columns: <code>name, number, set, language, nm, lp, note</code> (only <code>name</code> and <code>nm</code> are required; <code>lp</code> defaults to 85% of nm). Great for Card Ladder / Terapeak numbers.</p>
+        <textarea id="sheetText" rows="8" placeholder="name,number,set,language,nm,lp,note
+Rocket's Suicune,96,VS,ja,185,150,Terapeak 30d avg
+Charizard ex,199,sv2a,ja,140,118,"></textarea>
+        <div class="row inline"><button id="btnImportSheet" class="primary">Save sheet</button><input type="file" id="sheetFile" accept=".csv,.txt"><span id="sheetStatus" class="hint"></span></div>
+      </div>
+    </section>
+
+    <section id="sites">
+      <h2>Sites &amp; display</h2>
+      <div class="card">
+        <div class="row three">
+          <label class="chk"><input type="checkbox" id="site_mercari"> Mercari</label>
+          <label class="chk"><input type="checkbox" id="site_ebay"> eBay</label>
+          <label class="chk"><input type="checkbox" id="site_generic"> Heuristic mode on other enabled sites</label>
+        </div>
+        <div class="row"><label>Extra sites you've enabled from the popup</label><div id="extraSites" class="muted">none</div></div>
+        <div class="row three">
+          <label class="chk"><input type="checkbox" id="showUnknownBadge"> Show "?" badge when a card can't be matched</label>
+          <label class="chk"><input type="checkbox" id="showTrend"> Show 7-day trend arrow on badges</label>
+          <label class="chk"><input type="checkbox" id="dimSeen"> Dim listings you've already opened</label>
+        </div>
+        <div class="row two">
+          <div><label>Badge position</label><select id="badgePosition"><option value="top-left">Top left</option><option value="top-right">Top right</option><option value="bottom-left">Bottom left</option></select></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="misc">
+      <h2>Backup &amp; debug</h2>
+      <div class="card">
+        <div class="row inline"><button id="btnExport">Export settings + watchlist (JSON)</button><input type="file" id="importFile" accept=".json"><button id="btnReset">Reset to defaults</button></div>
+        <div class="row"><label class="chk"><input type="checkbox" id="debug"> Verbose console logging (<code>[CDS]</code> in page console)</label></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../lib/storage.js"></script>
+  <script src="../lib/providers/manual.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
